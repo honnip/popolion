@@ -36,14 +36,14 @@ Extract files except those that match the expression:
 
 ```shell
 # --exclude option takes glob pattern
-popo extract path/to/example.ipf -e "*.jpg"
+popo extract -e "*.jpg" path/to/example.ipf
 
 # also multiple patterns
-popo extract example.ipf -e "*.jpg" -e "some.ipf/*"
+popo extract -e "*.jpg" -e "some.ipf/*" example.ipf
 ```
 
-Don't overwrite files
+Never overwrite files:
 
 ```shell
-popo extract example.ipf -n
+popo extract -n example.ipf
 ```
