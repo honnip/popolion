@@ -6,12 +6,18 @@ A cli tool for ipf archive.
 
 - Extract ipf archive
 - Decrypt ies file (this is done by default)
-- List files of ipf archive (soon)
+- List files of ipf archive
 
 Try `popo -h` to see all available commands, `popo extract -h` to see usage and
 options for extract command.
 
 ## Examples
+
+List files
+
+```shell
+popo list path/to/example.ipf
+```
 
 Extract
 
