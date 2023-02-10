@@ -37,7 +37,11 @@ enum SubCommands {
         dest: Option<PathBuf>,
     },
     /// List files in ipf archive
-    List {},
+    List {
+        /// Path to ipf archive
+        #[arg(required = true)]
+        file: PathBuf,
+    },
 }
 
 fn main() {
@@ -91,6 +95,12 @@ fn main() {
                 }
             }
         }
-        SubCommands::List {} => todo!(),
+        SubCommands::List { file } => {
+            let mut ipf = IpfArchive::open(file).unwrap();
+            for i in 0..ipf.len() {
+                let entry = ipf.by_index(i).unwrap();
+                println!("{}", entry.full_path().display());
+            }
+        }
     }
 }
