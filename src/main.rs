@@ -42,7 +42,6 @@ enum SubCommands {
 
 fn main() {
     let cli = Cli::parse();
-    println!("{cli:?}");
 
     match cli.command {
         SubCommands::Extract {
