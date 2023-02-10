@@ -9,6 +9,10 @@ edition = "2021"
 name = "popo"
 path = "src/main.rs"
 
+[profile.release]
+strip = true
+codegen-units = 1
+
 [dependencies]
 libtos = { git = "https://github.com/honnip/libtos" }
 clap = { version = "4", features = ["derive"] }
