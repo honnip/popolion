@@ -17,3 +17,4 @@ codegen-units = 1
 libtos = { git = "https://github.com/honnip/libtos" }
 clap = { version = "4", features = ["derive"] }
 globset = "0.4"
+sanitize-filename = "0.4"

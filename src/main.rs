@@ -78,7 +78,9 @@ fn main() {
                     if sub {
                         path.push(file.file_stem().unwrap());
                     }
-                    path.push(entry.full_path());
+                    path.push(sanitize_filename::sanitize(
+                        entry.full_path().to_str().unwrap(),
+                    ));
 
                     if never_overwrite && path.exists() {
                         continue;
