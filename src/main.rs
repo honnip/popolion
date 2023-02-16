@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use globset::{Glob, GlobSetBuilder};
 use libtos::IpfArchive;
-use std::path::PathBuf;
+use std::path::{self, PathBuf};
 
 #[derive(Parser, Debug)]
 #[command(name = "Popolion")]
@@ -75,12 +75,12 @@ fn main() {
                     if let Some(dest) = &dest {
                         path.push(dest);
                     }
+
                     if sub {
                         path.push(file.file_stem().unwrap());
                     }
-                    path.push(sanitize_filename::sanitize(
-                        entry.full_path().to_str().unwrap(),
-                    ));
+
+                    path.push(sanitize(entry.full_path()));
 
                     if never_overwrite && path.exists() {
                         continue;
@@ -105,4 +105,17 @@ fn main() {
             }
         }
     }
+}
+
+fn sanitize(path: PathBuf) -> PathBuf {
+    let mut sanitized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            path::Component::Normal(s) => {
+                sanitized.push(sanitize_filename::sanitize(s.to_str().unwrap()));
+            }
+            _ => sanitized.push(component),
+        }
+    }
+    sanitized
 }
