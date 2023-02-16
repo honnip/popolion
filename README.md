@@ -28,7 +28,7 @@ popo extract example.ipf another.ipf
 popo extract *.ipf
 
 # Extract to sub-directory (with same name as filename)
-popo extract -s example.ipf
+popo extract -s example.ipf  # example/...
 ```
 
 Extract to specific directory:
@@ -42,13 +42,13 @@ Extract files except those that match the expression:
 
 ```shell
 # --exclude option takes glob pattern
-popo extract -x "*.jpg" path/to/example.ipf
+popo extract path/to/example.ipf -x "*.png"
 
 # also multiple patterns
-popo extract -x "*.jpg" -x "some.ipf/*" example.ipf
+popo extract example.ipf -x "*.jpg" -x "some.ipf/*"
 
 # extract only lua files
-popo extract -x "*.[!l][!u][!a]" example.ipf  # can you suggest any improvements here?
+popo extract example.ipf -x "!*.lua"
 ```
 
 Never overwrite files:
