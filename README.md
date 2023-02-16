@@ -42,10 +42,13 @@ Extract files except those that match the expression:
 
 ```shell
 # --exclude option takes glob pattern
-popo extract -e "*.jpg" path/to/example.ipf
+popo extract -x "*.jpg" path/to/example.ipf
 
 # also multiple patterns
-popo extract -e "*.jpg" -e "some.ipf/*" example.ipf
+popo extract -x "*.jpg" -x "some.ipf/*" example.ipf
+
+# extract only lua files
+popo extract -x "*.[!l][!u][!a]" example.ipf  # can you suggest any improvements here?
 ```
 
 Never overwrite files:
