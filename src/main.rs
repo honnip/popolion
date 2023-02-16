@@ -16,19 +16,19 @@ struct Cli {
 enum SubCommands {
     /// Extract files from ipf archive
     Extract {
-        /// Path to ipf archives
+        /// path to ipf archives
         #[arg(required = true)]
         files: Vec<PathBuf>,
 
-        /// Extract to sub-directory (with same name as filename)
+        /// extract to Sub-directory (with same name as filename)
         #[arg(short, long)]
         sub: bool,
 
-        /// Exclude files with regex pattern
-        #[arg(short, long)]
+        /// eXclude files with glob pattern
+        #[arg(short = 'x', long)]
         exclude: Option<Vec<String>>,
 
-        /// Never overwrite files (Overwrite files by default)
+        /// Never overwrite files (overwrite files by default)
         #[arg(short = 'n', long)]
         never_overwrite: bool,
 
@@ -38,7 +38,7 @@ enum SubCommands {
     },
     /// List files in ipf archive
     List {
-        /// Path to ipf archive
+        /// path to ipf archive
         #[arg(required = true)]
         file: PathBuf,
     },
