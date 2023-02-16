@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use globset::{Glob, GlobSetBuilder};
+use globset::Glob;
 use libtos::IpfArchive;
 use std::path::{self, PathBuf};
 
@@ -58,16 +58,26 @@ fn main() {
             for file in &files {
                 // TODO error handling
                 let mut ipf = IpfArchive::open(file).unwrap();
-                for i in 0..ipf.len() {
+                // TODO do without label
+                'entry: for i in 0..ipf.len() {
                     let mut entry = ipf.by_index(i).unwrap();
                     if let Some(exclude) = &exclude {
-                        let mut builder = GlobSetBuilder::new();
-                        exclude.iter().for_each(|pattern| {
-                            builder.add(Glob::new(pattern).unwrap());
-                        });
-                        let set = builder.build().unwrap();
-                        if !set.matches(entry.full_path()).is_empty() {
-                            continue;
+                        for pattern in exclude {
+                            if let Some(whitelist) = pattern.strip_prefix('!') {
+                                let glob = Glob::new(whitelist)
+                                    .expect("Invalid glob pattern")
+                                    .compile_matcher();
+                                if !glob.is_match(entry.full_path()) {
+                                    continue 'entry;
+                                }
+                            } else {
+                                let glob = Glob::new(pattern)
+                                    .expect("Invalid glob pattern")
+                                    .compile_matcher();
+                                if glob.is_match(entry.full_path()) {
+                                    continue 'entry;
+                                }
+                            }
                         }
                     }
 
