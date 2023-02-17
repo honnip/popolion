@@ -6,20 +6,8 @@ on:
       - "[0-9]+.[0-9]+.[0-9]+*"
 
 jobs:
-  get-version:
-    runs-on: ubuntu-22.04
-    outputs:
-      version: ${{ env.VERSION }}
-    steps:
-      - name: Get the version
-        shell: bash
-        if: env.VERSION == ''
-        run: |
-          echo "VERION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          echo "version is ${{ env.VERSION }}"
   build:
     name: build
-    needs: ["get-version"]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -75,7 +63,7 @@ jobs:
       - name: Archiving
         shell: bash
         run: |
-          stage="popolion-${{ needs.get-version.outputs.version }}-${{ matrix.target }}"
+          stage="popolion-${{ matrix.target }}"
           mkdir -p "$stage"
 
           cp README.md "$stage"
