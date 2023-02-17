@@ -2,6 +2,9 @@
 
 A cli tool for ipf archive.
 
+Download pre-built binaries from
+[Releases](https://github.com/honnip/popolion/releases)
+
 ## Features
 
 - Extract ipf archive
@@ -47,8 +50,10 @@ popo extract path/to/example.ipf -x "*.png"
 # also multiple patterns
 popo extract example.ipf -x "*.jpg" -x "some.ipf/*"
 
-# extract only lua files
+# extract only LUA files
 popo extract example.ipf -x "!*.lua"
+# ..or LUA and XML files
+popo extract example.ipf -x "!.{lua,xml}"
 ```
 
 Never overwrite files:
