@@ -111,8 +111,11 @@ fn main() -> Result<()> {
 
                     path.push(sanitize(entry.full_path()));
 
-                    if never_overwrite && path.exists() {
-                        continue;
+                    if path.exists() {
+                        if never_overwrite {
+                            continue;
+                        }
+                        pb.println(format!("{} already exists, overwriting", path.display()))
                     }
 
                     if let Some(p) = path.parent() {
