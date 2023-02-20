@@ -1,5 +1,7 @@
+use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use globset::Glob;
+use indicatif::{ProgressBar, ProgressStyle};
 use libtos::IpfArchive;
 use std::path::{self, PathBuf};
 
@@ -44,7 +46,7 @@ enum SubCommands {
     },
 }
 
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
@@ -55,24 +57,39 @@ fn main() {
             never_overwrite,
             dest,
         } => {
-            for file in &files {
-                // TODO error handling
-                let mut ipf = IpfArchive::open(file).unwrap();
-                // TODO do without label
+            for file in files.iter() {
+                // open ipf archive
+                let mut ipf = IpfArchive::open(file)
+                    .with_context(|| format!("could not read file: {}", file.display()))?;
+
+                // init progress bar
+                let pb = ProgressBar::new(ipf.len() as u64);
+                pb.set_style(
+                    ProgressStyle::with_template(
+                        "{spinner:.green} [{elapsed_precise}] [{msg}] [{wide_bar:.cyan/blue}] [{human_pos}/{human_len:^}]",
+                    )
+                    .unwrap()
+                    .progress_chars("#>-"),
+                );
+                let filename = file.file_name().unwrap().to_str().unwrap_or("?");
+                pb.set_message(filename.to_owned());
+
                 'entry: for i in 0..ipf.len() {
-                    let mut entry = ipf.by_index(i).unwrap();
+                    let mut entry = ipf.by_index(i)?;
+
+                    // --exclude
                     if let Some(exclude) = &exclude {
                         for pattern in exclude {
                             if let Some(whitelist) = pattern.strip_prefix('!') {
                                 let glob = Glob::new(whitelist)
-                                    .expect("Invalid glob pattern")
+                                    .with_context(|| format!("invalid glob pattern: {}", pattern))?
                                     .compile_matcher();
                                 if !glob.is_match(entry.full_path()) {
                                     continue 'entry;
                                 }
                             } else {
                                 let glob = Glob::new(pattern)
-                                    .expect("Invalid glob pattern")
+                                    .with_context(|| format!("invalid glob pattern: {}", pattern))?
                                     .compile_matcher();
                                 if glob.is_match(entry.full_path()) {
                                     continue 'entry;
@@ -87,7 +104,9 @@ fn main() {
                     }
 
                     if sub {
-                        path.push(file.file_stem().unwrap());
+                        path.push(file.file_stem().with_context(|| {
+                            format!("input file has no filename: {}", file.display())
+                        })?);
                     }
 
                     path.push(sanitize(entry.full_path()));
@@ -98,23 +117,33 @@ fn main() {
 
                     if let Some(p) = path.parent() {
                         if !p.exists() {
-                            std::fs::create_dir_all(p).unwrap();
+                            std::fs::create_dir_all(p).with_context(|| {
+                                format!("failed to create directory: {}", p.display())
+                            })?;
                         }
                     }
 
-                    let mut file = std::fs::File::create(path).unwrap();
-                    std::io::copy(&mut entry, &mut file).unwrap();
+                    let mut file = std::fs::File::create(path.clone())
+                        .with_context(|| format!("failed to create file: {}", path.display()))?;
+                    std::io::copy(&mut entry, &mut file)
+                        .with_context(|| format!("failed to write file: {}", path.display()))?;
+
+                    // update progress bar
+                    pb.inc(1);
                 }
+                pb.finish_and_clear();
             }
         }
         SubCommands::List { file } => {
-            let mut ipf = IpfArchive::open(file).unwrap();
+            let mut ipf = IpfArchive::open(file)?;
             for i in 0..ipf.len() {
                 let entry = ipf.by_index(i).unwrap();
                 println!("{}", entry.full_path().display());
             }
         }
     }
+
+    Ok(())
 }
 
 fn sanitize(path: PathBuf) -> PathBuf {

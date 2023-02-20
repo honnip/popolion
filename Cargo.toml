@@ -18,3 +18,5 @@ libtos = { git = "https://github.com/honnip/libtos", rev = "8a206762" }
 clap = { version = "4", features = ["derive"] }
 globset = "0.4"
 sanitize-filename = "0.4"
+anyhow = "1"
+indicatif = { version = "0.17", features = ["improved_unicode"] }
