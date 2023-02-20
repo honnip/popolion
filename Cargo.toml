@@ -14,9 +14,10 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-libtos = { git = "https://github.com/honnip/libtos", rev = "8a206762" }
+libtos = { path = "../libtos" }
 clap = { version = "4", features = ["derive"] }
 globset = "0.4"
 sanitize-filename = "0.4"
 anyhow = "1"
 indicatif = { version = "0.17", features = ["improved_unicode"] }
+rayon = "1.6"
