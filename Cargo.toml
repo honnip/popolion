@@ -14,7 +14,7 @@ strip = true
 codegen-units = 1
 
 [dependencies]
-libtos = { git = "https://github.com/honnip/libtos" }
+libtos = { git = "https://github.com/honnip/libtos", rev = "8a206762" }
 clap = { version = "4", features = ["derive"] }
 globset = "0.4"
 sanitize-filename = "0.4"
