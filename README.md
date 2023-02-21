@@ -28,7 +28,7 @@ Extract
 # Extract to current directory
 popo extract example.ipf
 popo extract example.ipf another.ipf
-popo extract *.ipf
+popo extract *.ipf # on Windows (cmd and powershell), wildcard is not supported. Try nushell or WSL
 
 # Extract to sub-directory (with same name as filename)
 popo extract -s example.ipf  # example/...
