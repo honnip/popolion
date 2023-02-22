@@ -122,7 +122,7 @@ fn main() -> Result<()> {
                         if never_overwrite {
                             status = false;
                         } else {
-                            pb.println(format!("{} already exists, overwriting", path.display()))
+                            // pb.println(format!("{} already exists, overwriting", path.display()))
                         }
                     }
 
